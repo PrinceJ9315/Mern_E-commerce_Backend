@@ -7,13 +7,12 @@ import morgan from "morgan";
 import Stripe from "stripe";
 import cors from "cors";
 
-//Importing Routes
+// Importing Routes
 import userRoute from "./routes/user.js";
 import productRoute from "./routes/products.js";
 import orderRoute from "./routes/order.js";
 import paymentRoute from "./routes/payment.js";
 import dashboardRoute from './routes/stats.js'
-
 
 config({
   path: "./.env",
@@ -23,7 +22,13 @@ const port = process.env.PORT || 5000;
 const mongoURI = process.env.MONGO_URI || "";
 const stripeKey = process.env.STRIPE_KEY || "";
 
-connectDB(mongoURI);
+try {
+  connectDB(mongoURI);
+  console.log("Database connected successfully");
+} catch (error) {
+  console.error("Database connection error:", error);
+  process.exit(1); // Exit process if connection fails
+}
 
 export const stripe = new Stripe(stripeKey);
 export const myCache = new NodeCache();
@@ -33,18 +38,16 @@ const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors({
-  origin: 'https://mern-e-commerce-frontend-woad.vercel.app',
+  origin: [process.env.CLIENT_URL!],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}
-
-));
+  credentials: true,
+}));
 
 app.get("/", (req, res) => {
   res.send("API Working with /api/v1");
 });
 
-//Using Routes
+// Using Routes
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/order", orderRoute);
