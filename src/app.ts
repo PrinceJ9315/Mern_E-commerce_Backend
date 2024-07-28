@@ -27,7 +27,7 @@ try {
   console.log("Database connected successfully");
 } catch (error) {
   console.error("Database connection error:", error);
-  process.exit(1); // Exit process if connection fails
+  process.exit(1); 
 }
 
 export const stripe = new Stripe(stripeKey);
@@ -37,12 +37,13 @@ const app = express();
 
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(cors({
-  origin: [process.env.CLIENT_URL!],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true,
-}));
-
+app.use(
+  cors({
+    origin: [process.env.CLIENT_URL!],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 app.get("/", (req, res) => {
   res.send("API Working with /api/v1");
 });
