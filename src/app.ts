@@ -35,15 +35,13 @@ export const myCache = new NodeCache();
 
 const app = express();
 
+// Middleware
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(
-  cors({
-    origin: [process.env.CLIENT_URL!],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+
+// CORS Middleware
+app.use(cors());
+
 app.get("/", (req, res) => {
   res.send("API Working with /api/v1");
 });
