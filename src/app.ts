@@ -40,7 +40,11 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 // CORS Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'https://mern-e-commerce-frontend-fjww.onrender.com/', 
+  methods: 'GET, POST, PUT, DELETE',
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 app.get("/", (req, res) => {
   res.send("API Working with /api/v1");
