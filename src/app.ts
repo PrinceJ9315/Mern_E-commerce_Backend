@@ -44,6 +44,7 @@ app.use(cors({
   origin: 'https://mern-e-commerce-frontend-fjww.onrender.com', 
   methods: 'GET, POST, PUT, DELETE',
   allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
 
 app.get("/", (req, res) => {
