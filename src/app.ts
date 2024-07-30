@@ -40,18 +40,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 // CORS Middleware
-app.use(cors({
-  origin: '*', 
-  methods: 'GET,HEAD,OPTIONS,POST,PUT',
-  allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-}));
-
-app.use("/uploads", (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  next();
-}, express.static("uploads"));
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("API Working with /api/v1");
@@ -64,6 +53,7 @@ app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/payment", paymentRoute);
 app.use("/api/v1/dashboard", dashboardRoute);
 
+app.use("/uploads", express.static("uploads"));
 app.use(errorMiddleware);
 
 app.listen(port, () => {
