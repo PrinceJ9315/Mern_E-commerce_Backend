@@ -45,7 +45,7 @@ async function startServer() {
 
   // CORS Middleware
   app.use(cors({
-    origin: '*',
+    origin: 'https://mern-e-commerce-frontend-fjww.onrender.com',
     methods: 'GET, POST, PUT, DELETE',
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
