@@ -6,6 +6,7 @@ import { config } from "dotenv";
 import morgan from "morgan";
 import Stripe from "stripe";
 import cors from "cors";
+import compression from 'compression';
 
 // Importing Routes
 import userRoute from "./routes/user.js";
@@ -22,44 +23,51 @@ const port = process.env.PORT || 5000;
 const mongoURI = process.env.MONGO_URI || "";
 const stripeKey = process.env.STRIPE_KEY || "";
 
-try {
-  connectDB(mongoURI);
-  console.log("Database connected successfully");
-} catch (error) {
-  console.error("Database connection error:", error);
-  process.exit(1); 
-}
-
+// Move export statements to the top level
 export const stripe = new Stripe(stripeKey);
 export const myCache = new NodeCache();
 
-const app = express();
+async function startServer() {
+  try {
+    await connectDB(mongoURI);
+    console.log("Database connected successfully");
+  } catch (error) {
+    console.error("Database connection error:", error);
+    process.exit(1);
+  }
 
-// Middleware
-app.use(express.json());
-app.use(morgan("dev"));
+  const app = express();
 
-// CORS Middleware
-app.use(cors({
-  origin: 'https://mern-e-commerce-frontend-fjww.onrender.com', 
-  methods: 'GET, POST, PUT, DELETE',
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+  // Middleware
+  app.use(express.json());
+  app.use(morgan("dev"));
+  app.use(compression());
 
-app.get("/", (req, res) => {
-  res.send("API Working with /api/v1");
-});
+  // CORS Middleware
+  app.use(cors({
+    origin: 'https://mern-e-commerce-frontend-fjww.onrender.com',
+    methods: 'GET, POST, PUT, DELETE',
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  }));
 
-// Using Routes
-app.use("/api/v1/user", userRoute);
-app.use("/api/v1/product", productRoute);
-app.use("/api/v1/order", orderRoute);
-app.use("/api/v1/payment", paymentRoute);
-app.use("/api/v1/dashboard", dashboardRoute);
+  app.get("/", (req, res) => {
+    res.send("API Working with /api/v1");
+  });
 
-app.use("/uploads", express.static("uploads"));
-app.use(errorMiddleware);
+  // Using Routes
+  app.use("/api/v1/user", userRoute);
+  app.use("/api/v1/product", productRoute);
+  app.use("/api/v1/order", orderRoute);
+  app.use("/api/v1/payment", paymentRoute);
+  app.use("/api/v1/dashboard", dashboardRoute);
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+  app.use("/uploads", express.static("uploads"));
+  app.use(errorMiddleware);
+
+  app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+  });
+}
+
+startServer();
